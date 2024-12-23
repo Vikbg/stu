@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Your Timetable</h1>
+
+    <!-- Container for FullCalendar -->
+    <div id="calendar"></div>
+
+    <style>
+        #calendar {
+            max-width: 800px;
+            margin: 0 auto;
+            height: 500px;
+        }
+        .fc-event {
+            font-size: 0.8rem;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                events: [
+                    {% for entry in timetable %}
+                    {
+                        title: "{{ entry['subject'] }}",
+                        start: "{{ entry['day'] }}T{{ entry['start_time'] }}",
+                        end: "{{ entry['day'] }}T{{ entry['end_time'] }}",
+                        description: "Room: {{ entry['room'] }}",
+                    },
+                    {% endfor %}
+                ],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek,agendaDay'
+                },
+                contentHeight: 500,
+                aspectRatio: 1.5,
+                eventLimit: true
+            });
+        });
+    </script>
+{% endblock %}
