@@ -1,81 +1,29 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block content %}
-<div class="container mt-5" style="font-family: monospace">
-    <h1>Pixel War - Jeu de caractères</h1>
-
-    <div id="grid-container" style="overflow: auto; height: 500px; width: 100%; border: 1px solid #ccc; position: relative;">
-        <div id="grid" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(50, 20px); grid-auto-rows: 20px; gap: 1px;">
-            <!-- Les cellules seront générées ici par JavaScript -->
-        </div>
-    </div>
-
-    <div class="mt-3">
-        <form id="offset-form">
-            <label for="offset-x">Offset X:</label>
-            <input type="number" id="offset-x" value="0" style="width: 60px;">
-            <label for="offset-y">Offset Y:</label>
-            <input type="number" id="offset-y" value="0" style="width: 60px;">
-            <button type="button" id="update-offset" class="btn btn-primary">Déplacer la grille</button>
-        </form>
-    </div>
-
-    <script>
-        const grid = document.getElementById("grid");
-        const cellSize = 20; // Taille des cellules
-        const gridSize = 50; // Nombre de cellules visibles par ligne/colonne
-
-        let offsetX = 0, offsetY = 0; // Offsets pour navigation
-
-        function createGrid() {
-            grid.innerHTML = ""; // Réinitialise la grille
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement("div");
-                    cell.style.width = `${cellSize}px`;
-                    cell.style.height = `${cellSize}px`;
-                    cell.style.border = "1px solid #ddd";
-                    cell.style.textAlign = "center";
-                    cell.style.lineHeight = `${cellSize}px`;
-                    cell.setAttribute("data-x", x + offsetX);
-                    cell.setAttribute("data-y", y + offsetY);
-                    cell.contentEditable = true; // Rendre la cellule éditable
-                    cell.addEventListener("input", handleInput);
-                    grid.appendChild(cell);
-                }
-            }
-        }
-
-        function handleInput(event) {
-            const cell = event.target;
-            const nextCell = cell.nextElementSibling;
-            if (nextCell) {
-                nextCell.focus();
-            }
-            const x = cell.getAttribute("data-x");
-            const y = cell.getAttribute("data-y");
-            const character = cell.textContent.trim();
-            if (character.length > 1) {
-                cell.textContent = character.charAt(0); // Limite à 1 caractère
-            }
-            saveAction(x, y, character.charAt(0)); // Enregistre l'action
-        }
-
-        function saveAction(x, y, character) {
-            fetch(`/game/${x}/${y}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ character }),
-            }).catch(console.error);
-        }
-
-        document.getElementById("update-offset").addEventListener("click", () => {
-            offsetX = parseInt(document.getElementById("offset-x").value, 10);
-            offsetY = parseInt(document.getElementById("offset-y").value, 10);
-            createGrid();
-        });
-
-        createGrid();
-    </script>
+<div class="text-center mt-5">
+    <h1>Bienvenue sur Char Wars</h1>
+    <p class="lead mt-4">
+        Char Wars est un jeu communautaire où chaque utilisateur peut poser, modifier et créer des caractères dans un tableau collaboratif. 
+        Rejoignez-nous et participez à construire quelque chose d'unique !
+    </p>
+    <p class="mt-4">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Inscrivez-vous</a>
+        <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('login') }}">Connectez-vous</a>
+    </p>
+</div>
+<div class="mt-5">
+    <h2>Comment ça marche ?</h2>
+    <ol class="mt-3">
+        <li>Inscrivez-vous pour obtenir un compte.</li>
+        <li>Participez au tableau collaboratif en plaçant des caractères uniques.</li>
+        <li>Voyez vos contributions dans le tableau de bord.</li>
+        <li>Relevez des défis et grimpez dans le classement !</li>
+    </ol>
+</div>
+<div class="mt-5">
+    <h2>Statistiques en temps réel</h2>
+    <p>
+        Une fois connecté, découvrez le nombre de caractères posés, les utilisateurs actifs, et bien plus dans le tableau de bord !
+    </p>
 </div>
 {% endblock %}
