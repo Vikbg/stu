@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="grid"></div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
+<script>
+const GRID_SIZE = 50;
+const socket = io.connect();
+
+// Initialisation de la grille
+let offsetX = 0, offsetY = 0;
+
+// Charger les chunks visibles
+function loadChunk(chunkX, chunkY) {
+    fetch(`/api/get_chunk?chunk_x=${chunkX}&chunk_y=${chunkY}`)
+        .then(res => res.json())
+        .then(data => renderChunk(data));
+}
+
+// Dessiner un chunk
+function renderChunk(data) {
+    const chunkX = data.chunk_x;
+    const chunkY = data.chunk_y;
+    const characters = data.data.split('');
+    const grid = document.getElementById('grid');
+
+    characters.forEach((char, i) => {
+        const x = i % GRID_SIZE + chunkX * GRID_SIZE;
+        const y = Math.floor(i / GRID_SIZE) + chunkY * GRID_SIZE;
+        const cell = document.createElement('div');
+        cell.style.position = 'absolute';
+        cell.style.left = `${x * 20}px`;
+        cell.style.top = `${y * 20}px`;
+        cell.innerText = char;
+        grid.appendChild(cell);
+    });
+}
+
+// Temps réel
+socket.on('cell_updated', data => {
+    const cell = document.querySelector(`[data-x="${data.cell_x}"][data-y="${data.cell_y}"]`);
+    if (cell) cell.innerText = data.character;
+});
+</script>
+
+{% endblock %}
